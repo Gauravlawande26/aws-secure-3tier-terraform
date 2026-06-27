@@ -1,83 +1,216 @@
-# Deploy Scalable VPC Architecture on AWS Cloud
+# Deploy Scalable VPC Architecture on AWS
 
-![AWS-Cloud](https://imgur.com/AXD50yl.png)
+## Overview
 
-### TABLE OF CONTENTS
+This project demonstrates the deployment of a scalable and highly available network architecture on AWS using Amazon VPC. The infrastructure is designed following AWS best practices and includes public and private subnets, Auto Scaling, Application Load Balancer, NAT Gateway, Transit Gateway, Bastion Host, CloudWatch monitoring, and Route 53.
 
-1. [Goal](https://github.com/NotHarshhaa/DevOps-Projects/blob/master/DevOps-Project-02/README.md#goal)
-2. [Pre-Requisites](https://github.com/NotHarshhaa/DevOps-Projects/blob/master/DevOps-Project-02/README.md#pre-requisites)
-3. [Pre-Deployment](https://github.com/NotHarshhaa/DevOps-Projects/blob/master/DevOps-Project-02/README.md#pre-deployment)
-4. [VPC Deployment](https://github.com/NotHarshhaa/DevOps-Projects/blob/master/DevOps-Project-02/README.md#vpc-deployment)
-5. [Validation](https://github.com/NotHarshhaa/DevOps-Projects/blob/master/DevOps-Project-02/README.md#validation)
-
-## Goal
-
-Deploy a Modular and Scalable Virtual Network Architecture with Amazon VPC.
-
-## Pre-Requisites
-
-1. You must be having an [AWS account](https://aws.amazon.com/) to create infrastructure resources on AWS cloud.
-2. [Source Code](https://github.com/NotHarshhaa/DevOps-Projects/blob/master/DevOps-Project-02/html-web-app)
-
-## Pre-Deployment
-
-Customize the application dependencies mentioned below on AWS EC2 instance and create the Golden AMI.
-
-1. AWS CLI
-2. Install Apache Web Server
-3. Install Git
-4. Cloudwatch Agent
-5. Push custom memory metrics to Cloudwatch.
-6. AWS SSM Agent
-
-## VPC Deployment
-
-1. Build VPC network ( 192.168.0.0/16 ) for Bastion Host deployment as per the architecture shown above.
-2. Build VPC network ( 172.32.0.0/16 ) for deploying Highly Available and Auto Scalable application servers as per the architecture shown above.
-3. Create NAT Gateway in Public Subnet and update Private Subnet associated Route Table accordingly to route the default traffic to NAT for outbound internet connection.
-4. Create Transit Gateway and associate both VPCs to the Transit Gateway  for private communication.
-5. Create Internet Gateway for each VPC and Public Subnet associated Route Table accordingly to route the default traffic to IGW for inbound/outbound internet connection.
-6. Create Cloudwatch Log Group with two Log Streams to store the VPC Flow Logs of both VPCs.
-7. Enable Flow Logs for both VPCs and push the Flow Logs to Cloudwatch Log Groups and store the logs in the respective Log Stream for each VPC.
-8. Create Security Group for bastion host allowing port 22 from public.
-9. Deploy Bastion Host EC2 instance in the Public Subnet with EIP associated.
-10. Create S3 Bucket to store application specific configuration.
-11. Create Launch Template with below configuration (replacing deprecated Launch Configuration).
-    1. Golden AMI
-    2. Instance Type – t3.micro (updated from t2.micro for better performance)
-    3. Userdata to pull the code from Git Repository to document root folder of webserver and start the httpd service.
-    4. IAM Role granting access to Session Manager and to S3 bucket created in the previous step to pull the configuration. (Do not grant S3 Full Access)
-    5. Security Group allowing port 22 from Bastion Host and Port 80 from Public.
-    6. Key Pair
-12. Create Auto Scaling Group with Min: 2 Max: 4 with two Private Subnets associated to multiple AZs for high availability.
-13. Create Target Group and associate it with ASG.
-14. Create Application Load Balancer (ALB) in Public Subnets for better layer 7 routing and add Target Group as target.
-15. Update route53 hosted zone with CNAME record routing the traffic to ALB.
-
-## Validation
-
-1. As DevOps Engineer login to Private Instances via Bastion Host.
-2. Login to AWS Session Manager and access the EC2 shell from console.
-3. Browse web application from public internet browser using domain name and verify that page loaded.
-
-## 🛠️ Author & Community  
-
-This project is crafted by **[Harshhaa](https://github.com/NotHarshhaa)** 💡.  
-I’d love to hear your feedback! Feel free to share your thoughts.  
-
-📧 **Connect with me:**
-
-- **GitHub**: [@NotHarshhaa](https://github.com/NotHarshhaa)  
-- **Blog**: [ProDevOpsGuy](https://blog.prodevopsguytech.com)  
-- **Telegram Community**: [Join Here](https://t.me/prodevopsguy)  
-- **LinkedIn**: [Harshhaa Vardhan Reddy](https://www.linkedin.com/in/harshhaa-vardhan-reddy/)  
+The objective of this project was to gain hands-on experience in designing production-style AWS networking infrastructure and deploying a highly available web application.
 
 ---
 
-## ⭐ Support the Project  
+## Architecture
 
-If you found this helpful, consider **starring** ⭐ the repository and sharing it with your network! 🚀  
+> **Add your own architecture diagram here**
+>
+> Example:
+>
+> ```
+> images/aws-vpc-architecture.png
+> ```
 
-### 📢 Stay Connected  
+---
 
-![Follow Me](https://imgur.com/2j7GSPs.png)
+## Project Objectives
+
+* Design a secure and scalable AWS network.
+* Deploy web servers inside private subnets.
+* Provide secure administrative access using a Bastion Host.
+* Configure Auto Scaling for high availability.
+* Distribute traffic using an Application Load Balancer.
+* Enable monitoring using CloudWatch and VPC Flow Logs.
+* Configure private communication between VPCs using Transit Gateway.
+* Manage DNS using Route 53.
+
+---
+
+## AWS Services Used
+
+* Amazon VPC
+* EC2
+* Auto Scaling Group
+* Launch Template
+* Application Load Balancer (ALB)
+* NAT Gateway
+* Internet Gateway
+* Transit Gateway
+* Route 53
+* CloudWatch
+* IAM
+* Systems Manager (SSM)
+* S3
+* Elastic IP
+
+---
+
+## Network Design
+
+### VPC 1
+
+* CIDR: `192.168.0.0/16`
+* Public Subnet
+* Bastion Host
+
+### VPC 2
+
+* CIDR: `172.32.0.0/16`
+* Public Subnets
+* Private Subnets
+* Application Servers
+
+Both VPCs are connected using a Transit Gateway for secure internal communication.
+
+---
+
+## Deployment Steps
+
+### Step 1
+
+Create two VPCs with different CIDR blocks.
+
+### Step 2
+
+Create public and private subnets across multiple Availability Zones.
+
+### Step 3
+
+Attach Internet Gateways to both VPCs.
+
+### Step 4
+
+Create a NAT Gateway for outbound internet access from private subnets.
+
+### Step 5
+
+Configure route tables for public and private subnets.
+
+### Step 6
+
+Deploy a Bastion Host in the public subnet.
+
+### Step 7
+
+Create an S3 bucket for application configuration.
+
+### Step 8
+
+Create a Launch Template with:
+
+* Amazon Linux AMI
+* t3.micro instance
+* IAM Role
+* User Data Script
+* Security Group
+* Key Pair
+
+### Step 9
+
+Create an Auto Scaling Group.
+
+* Minimum Instances: 2
+* Maximum Instances: 4
+
+### Step 10
+
+Create an Application Load Balancer.
+
+### Step 11
+
+Create a Target Group and register EC2 instances.
+
+### Step 12
+
+Configure Route 53 to point the domain to the ALB.
+
+### Step 13
+
+Enable CloudWatch Logs and VPC Flow Logs.
+
+### Step 14
+
+Validate the deployment by accessing the application through the Load Balancer DNS.
+
+---
+
+## Security Features
+
+* Bastion Host for SSH access
+* Private EC2 instances
+* Security Groups
+* IAM Roles
+* Session Manager (SSM)
+* Private routing using Transit Gateway
+
+---
+
+## Project Structure
+
+```
+Project/
+│
+├── README.md
+├── architecture/
+│   └── architecture.png
+├── scripts/
+├── userdata/
+└── screenshots/
+```
+
+---
+
+## Learning Outcomes
+
+Through this project I learned:
+
+* AWS VPC networking
+* CIDR planning
+* Public and Private Subnets
+* Route Tables
+* Internet Gateway
+* NAT Gateway
+* Transit Gateway
+* Launch Templates
+* Auto Scaling Groups
+* Application Load Balancer
+* Route 53
+* CloudWatch Monitoring
+* IAM Best Practices
+
+---
+
+## Future Improvements
+
+* Infrastructure as Code using Terraform
+* CI/CD with Jenkins
+* Kubernetes deployment using EKS
+* AWS WAF integration
+* HTTPS using ACM
+
+---
+
+## Author
+
+**Gaurav Lawande**
+
+Aspiring DevOps & Cloud Engineer
+
+### Connect With Me
+
+* GitHub: https://github.com/YourGitHubUsername
+* LinkedIn: https://linkedin.com/in/YourLinkedIn
+* Email: [your-email@example.com](mailto:your-email@example.com)
+
+---
+
+## License
+
+This project is created for educational and portfolio purposes.
